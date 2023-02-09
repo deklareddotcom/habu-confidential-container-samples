@@ -28,7 +28,7 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - run: |
-          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/habu-cvm-attest:${{ github.sha }} -f cvm-python-app-remoteattest/DockerFile
+          docker build cvm-python-app-remoteattest -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/habu-cvm-attest:${{ github.sha }} -f cvm-python-app-remoteattest/DockerFile
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/habu-cvm-attest:${{ github.sha }}
 
       - name: Notify slack success
