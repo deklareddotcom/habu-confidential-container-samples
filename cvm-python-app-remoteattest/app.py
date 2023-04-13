@@ -1,15 +1,11 @@
 import subprocess
-import os
-import base64
-import jwt
 import json
 
 # Python 3 server example
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import time
 
-hostName = "0.0.0.0"
-serverPort = 8081
+HOST_NAME = "0.0.0.0"
+PORT = 8081
 
 
 class MyServer(BaseHTTPRequestHandler):
@@ -27,12 +23,11 @@ class MyServer(BaseHTTPRequestHandler):
         )
 
         g = str(p.stdout.read())
-
         g = g.replace("b'", "")
         g = g.replace("'", "")
-
         res = g.split(".")
         l = len(res)
+
         if l == 3:
             # now we have a fully formed JWT perform the decode and split
             print("JWT Token length Found ", l)
@@ -48,8 +43,8 @@ class MyServer(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    webServer = HTTPServer((hostName, serverPort), MyServer)
-    print("Server started http://%s:%s" % (hostName, serverPort))
+    webServer = HTTPServer((HOST_NAME, PORT), MyServer)
+    print("Server started http://%s:%s" % (HOST_NAME, PORT))
 
     try:
         webServer.serve_forever()

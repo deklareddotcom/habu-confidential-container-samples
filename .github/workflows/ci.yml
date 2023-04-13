@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
@@ -14,19 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: "Login via Azure CLI"
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Docker login
+        run: docker login ${{ secrets.ACR_SERVER }} -u ${{ secrets.ACR_SP_CLIENT_ID }} -p ${{ secrets.ACR_SP_CLIENT_SECRET }}
 
-      - name: "Build and push image"
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-      - run: |
-          docker build cvm-python-app-remoteattest -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/habu-cvm-attest:${{ github.sha }} -f cvm-python-app-remoteattest/DockerFile
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/habu-cvm-attest:${{ github.sha }}
+      - name: Build and push Docker image
+        run: |
+          docker build cvm-python-app-remoteattest -t ${{ secrets.ACR_SERVER }}/habu-cvm-attest:${{ github.sha }} -f cvm-python-app-remoteattest/DockerFile
+          docker push ${{ secrets.ACR_SERVER }}/habu-cvm-attest:${{ github.sha }}
