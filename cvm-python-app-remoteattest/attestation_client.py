@@ -30,7 +30,10 @@ if __name__ == "__main__":
             decoded_payload = base64.urlsafe_b64decode(payload + '===').decode('utf-8')
             decoded_signature = base64.urlsafe_b64decode(signature + '===').decode('utf-8')
 
-            with open(TOKEN_FILE_PATH, 'w') as file:
+            with open(TOKEN_FILE_PATH+"/maa-raw", 'w') as file:
+                file.write(jwt_from_stdout)
+
+            with open(TOKEN_FILE_PATH+"/maa-json", 'w') as file:
                 file.write(f'Header:\n{decoded_header}\n')
                 file.write(f'Payload:\n{decoded_payload}\n')
                 file.write(f'Signature:\n{decoded_signature}\n')
