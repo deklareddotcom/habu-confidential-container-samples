@@ -36,9 +36,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(g).encode("utf-8"))
         else:
             self.wfile.write(
-                json.dumps({"error": "JWT was not formed properly %s"}, g).encode(
-                    "utf-8"
-                )
+                json.dumps({"error": "JWT was not formed properly"}).encode("utf-8")
             )
 
 
