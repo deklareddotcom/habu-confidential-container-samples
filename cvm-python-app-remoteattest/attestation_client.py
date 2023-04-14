@@ -16,7 +16,7 @@ if __name__ == "__main__":
     jwt_from_stdout = str(p.stdout.read())
     jwt_from_stdout = jwt_from_stdout.replace("b'", "")
     jwt_from_stdout = jwt_from_stdout.replace("'", "")
-    jwt_from_stdout = jwt_from_stdout.replace('"', "")
+    #jwt_from_stdout = jwt_from_stdout.replace('"', "")
 
     if len(jwt_from_stdout.split(".")) == 3:
         print(f"got MAA JWT token: {jwt_from_stdout}")
