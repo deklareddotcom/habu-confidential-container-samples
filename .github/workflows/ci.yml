@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -13,11 +16,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set github sha for tags
+        run: echo "GH_SHORT_SHA=$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
+
       - name: Docker login
         run: docker login ${{ secrets.ACR_SERVER }} -u ${{ secrets.ACR_SP_CLIENT_ID }} -p ${{ secrets.ACR_SP_CLIENT_SECRET }}
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         run: |
-          docker build cvm-python-app-remoteattest -t ${{ secrets.ACR_SERVER }}/habu-cvm-attest:${{ github.sha }} -f cvm-python-app-remoteattest/DockerFile
+          docker build cvm-python-app-remoteattest -t ${{ secrets.ACR_SERVER }}/habu-cvm-attest:${{ github.sha }} -f cvm-python-app-remoteattest/Dockerfile
           docker tag ${{ secrets.ACR_SERVER }}/habu-cvm-attest:${{ github.sha }} ${{ secrets.ACR_SERVER }}/habu-cvm-attest:latest
+
+      - name: Push the Docker Image
+        if: github.ref == 'refs/heads/main'
+        run: |
           docker push --all-tags ${{ secrets.ACR_SERVER }}/habu-cvm-attest
