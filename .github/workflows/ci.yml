@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build cvm-python-app-remoteattest -t ${{ secrets.ACR_SERVER }}/habu-cvm-attest:${{ github.sha }} -f cvm-python-app-remoteattest/Dockerfile
+          docker build cvm-python-app-remoteattest -t ${{ secrets.ACR_SERVER }}/habu-cvm-attest:${{ github.sha }} -f cvm-python-app-remoteattest/DockerFile
           docker tag ${{ secrets.ACR_SERVER }}/habu-cvm-attest:${{ github.sha }} ${{ secrets.ACR_SERVER }}/habu-cvm-attest:latest
 
       - name: Push the Docker Image
