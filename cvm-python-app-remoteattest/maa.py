@@ -1,12 +1,14 @@
 import os
 import subprocess
 import base64
+import uuid
 
 TOKEN_FILE_PATH = os.environ.get("TOKEN_FILE_PATH")
+CRQR_ID = os.environ.get("CRQR_ID", str(uuid.uuid4()))
 
 if __name__ == "__main__":
     p = subprocess.Popen(
-        ["./AttestationClient"],
+        ["./AttestationClient", "-a", "https://sharedeus.eus.attest.azure.net/", "-n", CRQR_ID],
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
