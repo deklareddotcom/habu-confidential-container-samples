@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt upgrade -y
 RUN apt-get install -y \
     build-essential \
+    libssl-dev \
     libcurl4-openssl-dev \
     libjsoncpp-dev \
     libboost-all-dev \
