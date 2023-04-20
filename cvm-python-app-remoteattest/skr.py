@@ -1,11 +1,12 @@
 import subprocess
 import os
 import time
+import uuid
 
 MAA_URL = os.environ.get("MAA_URL", "https://sharedeus.eus.attest.azure.net/")
 DEK_SECRET = os.environ.get("DEK_SECRET")
-KEK_AKV_URL = os.environ.get(
-    "KEK_AKV_URL", "https://aksteevaultdev7289fd6d.vault.azure.net/keys/test-sid/3d3ae438f67843b4a1ea81df179894d7")
+KEK_AKV_URL = os.environ.get("KEK_AKV_URL")
+NONCE = os.environ.get("NONCE", str(uuid.uuid4()))
 
 if __name__ == "__main__":
     # wrap a key
@@ -14,6 +15,8 @@ if __name__ == "__main__":
             "./AzureAttestSKR",
             "-a",
             MAA_URL,
+            "-n",
+            NONCE,
             "-k",
             KEK_AKV_URL,
             "-s",
@@ -32,6 +35,8 @@ if __name__ == "__main__":
             "./AzureAttestSKR",
             "-a",
             MAA_URL,
+            "-n",
+            NONCE,
             "-k",
             KEK_AKV_URL,
             "-s",

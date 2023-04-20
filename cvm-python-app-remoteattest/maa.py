@@ -3,17 +3,18 @@ import subprocess
 import base64
 import uuid
 
+MAA_URL = os.environ.get("MAA_URL", "https://sharedeus.eus.attest.azure.net/")
 TOKEN_FILE_PATH = os.environ.get("TOKEN_FILE_PATH")
-CRQR_ID = os.environ.get("CRQR_ID", str(uuid.uuid4()))
+NONCE = os.environ.get("NONCE", str(uuid.uuid4()))
 
 if __name__ == "__main__":
     p = subprocess.Popen(
         [
             "./AttestationClient",
             "-a",
-            "https://sharedeus.eus.attest.azure.net/",
+            MAA_URL,
             "-n",
-            CRQR_ID,
+            NONCE,
             "-o",
             "TOKEN"
         ],
