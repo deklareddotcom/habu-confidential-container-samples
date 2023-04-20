@@ -1,5 +1,4 @@
-# Build stage
-FROM ubuntu:20.04 AS build
+FROM ubuntu:20.04
 
 WORKDIR /app
 
@@ -17,7 +16,9 @@ RUN apt-get install -y \
     nlohmann-json3-dev \
     cmake \
     wget \
-    git
+    git \
+    python3 \
+    python3-pip
 
 # Install the Azure Guest Attestation package
 RUN wget https://packages.microsoft.com/repos/azurecore/pool/main/a/azguestattestation1/azguestattestation1_1.0.5_amd64.deb
