@@ -44,6 +44,10 @@ RUN apt install -y python3 python3-pip
 COPY maa.py .
 COPY skr.py .
 
+# Install the Azure Guest Attestation package
+RUN wget https://packages.microsoft.com/repos/azurecore/pool/main/a/azguestattestation1/azguestattestation1_1.0.5_amd64.deb
+RUN dpkg -i azguestattestation1_1.0.5_amd64.deb
+
 #Build Python Here
 ADD requirements.txt .
 RUN python3 -m pip install -r requirements.txt
