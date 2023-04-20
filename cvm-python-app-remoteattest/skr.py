@@ -1,5 +1,6 @@
 import subprocess
 import os
+import time
 
 MAA_URL = os.environ.get("MAA_URL", "https://sharedeus.eus.attest.azure.net/")
 DEK_SECRET = os.environ.get("DEK_SECRET")
@@ -47,4 +48,5 @@ if __name__ == "__main__":
         raise ValueError(
             f"Failed to (un)wrap a symmetric key using secure key release. key={DEK_SECRET}, wrapped_key={wrapped_key}, unwrapped_key={unwrapped_key}")
 
+    time.sleep(3600)
     print(f"found dek {unwrapped_key}")

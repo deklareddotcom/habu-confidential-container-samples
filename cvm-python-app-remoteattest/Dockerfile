@@ -1,6 +1,6 @@
-FROM ubuntu:20.04
+# Build stage
+FROM ubuntu:20.04 AS build
 
-RUN mkdir /app
 WORKDIR /app
 COPY * /app/
 
@@ -32,13 +32,21 @@ RUN cmake . && make && cp ./AttestationClient /app
 WORKDIR /app/confidential-computing-cvm-guest-attestation/cvm-securekey-release-app
 RUN cmake . && make && cp ./AzureAttestSKR /app
 
+# Run stage
+FROM ubuntu:20.04
+
 WORKDIR /app
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update && apt upgrade -y
 RUN apt install -y python3 python3-pip
 
 #Build Python Here
-# Install pip requirements
 ADD requirements.txt .
 RUN python3 -m pip install -r requirements.txt
+
+COPY --from=build /app/AttestationClient .
+COPY --from=build /app/AzureAttestSKR .
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
 CMD ["python3", "maa.py"]
