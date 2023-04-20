@@ -45,6 +45,6 @@ if __name__ == "__main__":
 
     if DEK_SECRET != unwrapped_key:
         raise ValueError(
-            f"Failed to (un)wrap a symmetric key using secure key release. key={DEK_SECRET}, unwrapped_key={unwrapped_key}")
+            f"Failed to (un)wrap a symmetric key using secure key release. key={DEK_SECRET}, wrapped_key={wrapped_key}, unwrapped_key={unwrapped_key}")
 
     print(f"found dek {unwrapped_key}")
