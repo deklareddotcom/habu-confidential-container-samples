@@ -19,7 +19,6 @@ if __name__ == "__main__":
             DEK_SECRET,
             "-w"
         ],
-        shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         close_fds=True,
@@ -38,7 +37,6 @@ if __name__ == "__main__":
             wrapped_key,
             "-u"
         ],
-        shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         close_fds=True,

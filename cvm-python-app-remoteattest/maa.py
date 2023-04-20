@@ -17,7 +17,6 @@ if __name__ == "__main__":
             "-o",
             "TOKEN"
         ],
-        shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         close_fds=True,
