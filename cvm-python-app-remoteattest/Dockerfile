@@ -23,6 +23,7 @@ RUN apt-get install -y \
 # Install the Azure Guest Attestation package
 RUN wget https://packages.microsoft.com/repos/azurecore/pool/main/a/azguestattestation1/azguestattestation1_1.0.5_amd64.deb
 RUN dpkg -i azguestattestation1_1.0.5_amd64.deb
+RUN -rf azguestattestation1_1.0.5_amd64.deb
 
 # Clone CVM Guest Attestation Repo
 RUN git clone https://github.com/Azure/confidential-computing-cvm-guest-attestation.git
@@ -33,7 +34,7 @@ RUN cmake . && make && cp ./AttestationClient /app
 
 # Build AzureAttestSKR app
 WORKDIR /app/confidential-computing-cvm-guest-attestation/cvm-securekey-release-app
-RUN cmake . && make && cp ./AzureAttestSKR /app
+RUN cmake . -DCMAKE_BUILD_TYPE=Debug && make && cp ./AzureAttestSKR /app
 
 WORKDIR /app
 RUN rm -rf confidential-computing-cvm-guest-attestation
