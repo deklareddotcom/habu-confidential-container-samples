@@ -2,7 +2,9 @@
 FROM ubuntu:20.04 AS build
 
 WORKDIR /app
-COPY * /app/
+
+COPY maa.py /app/
+COPY skr.py /app/
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt upgrade -y
@@ -24,36 +26,20 @@ RUN dpkg -i azguestattestation1_1.0.5_amd64.deb
 # Clone CVM Guest Attestation Repo
 RUN git clone https://github.com/Azure/confidential-computing-cvm-guest-attestation.git
 
-# Build and run the AttestationClient app
+# Build AttestationClient app
 WORKDIR /app/confidential-computing-cvm-guest-attestation/cvm-attestation-sample-app
 RUN cmake . && make && cp ./AttestationClient /app
 
-# Build and run the AzureAttestSKR app
+# Build AzureAttestSKR app
 WORKDIR /app/confidential-computing-cvm-guest-attestation/cvm-securekey-release-app
 RUN cmake . && make && cp ./AzureAttestSKR /app
 
-# Run stage
-FROM ubuntu:20.04
-
 WORKDIR /app
-
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt upgrade -y
-RUN apt install -y python3 python3-pip
-
-COPY maa.py .
-COPY skr.py .
-
-# Install the Azure Guest Attestation package
-RUN wget https://packages.microsoft.com/repos/azurecore/pool/main/a/azguestattestation1/azguestattestation1_1.0.5_amd64.deb
-RUN dpkg -i azguestattestation1_1.0.5_amd64.deb
+RUN rm -rf confidential-computing-cvm-guest-attestation
 
 #Build Python Here
 ADD requirements.txt .
 RUN python3 -m pip install -r requirements.txt
-
-COPY --from=build /app/AttestationClient .
-COPY --from=build /app/AzureAttestSKR .
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
 CMD ["python3", "maa.py"]
