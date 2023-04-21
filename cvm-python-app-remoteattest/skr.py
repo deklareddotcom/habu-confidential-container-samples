@@ -1,58 +1,88 @@
 import subprocess
 import os
-import time
+import json
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import urlparse, parse_qs
 import uuid
 
-MAA_URL = os.environ.get("MAA_URL", "https://sharedeus.eus.attest.azure.net/")
-DEK_SECRET = os.environ.get("DEK_SECRET")
-KEK_AKV_URL = os.environ.get("KEK_AKV_URL")
-NONCE = os.environ.get("NONCE", str(uuid.uuid4()))
+MAA_URL = os.environ.get("MAA_URL", "https://sharedeus.eus.attest.azure.net")
+HOST_NAME = "0.0.0.0"
+PORT = 8081
+
+
+class MyServer(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "application/json")
+        self.end_headers()
+
+        parsed_url = urlparse(self.path)
+        query_params = parse_qs(parsed_url.query)
+
+        # access query parameters
+        secret = query_params.get('secret', [None])[0]
+        kek_key_url = query_params.get('kek_key_url', [None])[0]
+        nonce = query_params.get('nonce', [str(uuid.uuid4())])[0]
+
+        if self.path == '/wrap':
+            # wrap a key
+            p = subprocess.Popen(
+                [
+                    "./AzureAttestSKR",
+                    "-a",
+                    MAA_URL,
+                    "-n",
+                    nonce,
+                    "-k",
+                    kek_key_url,
+                    "-s",
+                    secret,
+                    "-w"
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                close_fds=True,
+            )
+            wrapped_key = str(p.stdout.read())
+            self.wfile.write(
+                json.dumps({"wrapped_key": wrapped_key}).encode("utf-8")
+            )
+        elif self.path == '/unwrap':
+            # unwrap a key
+            p = subprocess.Popen(
+                [
+                    "./AzureAttestSKR",
+                    "-a",
+                    MAA_URL,
+                    "-n",
+                    nonce,
+                    "-k",
+                    kek_key_url,
+                    "-s",
+                    secret,
+                    "-u"
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                close_fds=True,
+            )
+            unwrapped_key = str(p.stdout.read())
+
+            self.wfile.write(
+                json.dumps({"unwrapped_key": unwrapped_key}).encode("utf-8")
+            )
+        else:
+            raise NotImplementedError(f'{self.path} url is not implemented')
+
 
 if __name__ == "__main__":
-    # wrap a key
-    p = subprocess.Popen(
-        [
-            "./AzureAttestSKR",
-            "-a",
-            MAA_URL,
-            "-n",
-            NONCE,
-            "-k",
-            KEK_AKV_URL,
-            "-s",
-            DEK_SECRET,
-            "-w"
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        close_fds=True,
-    )
-    wrapped_key = str(p.stdout.read())
+    webServer = HTTPServer((HOST_NAME, PORT), MyServer)
+    print("Server started http://%s:%s" % (HOST_NAME, PORT))
 
-    # unwrap a key
-    p = subprocess.Popen(
-        [
-            "./AzureAttestSKR",
-            "-a",
-            MAA_URL,
-            "-n",
-            NONCE,
-            "-k",
-            KEK_AKV_URL,
-            "-s",
-            wrapped_key,
-            "-u"
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        close_fds=True,
-    )
-    unwrapped_key = str(p.stdout.read())
+    try:
+        webServer.serve_forever()
+    except KeyboardInterrupt:
+        pass
 
-    time.sleep(3600)
-
-    if DEK_SECRET != unwrapped_key:
-        raise ValueError(
-            f"Failed to (un)wrap a symmetric key using secure key release. key={DEK_SECRET}, wrapped_key={wrapped_key}, unwrapped_key={unwrapped_key}")
-
-    print(f"found dek {unwrapped_key}")
+    webServer.server_close()
+    print("Server stopped.")

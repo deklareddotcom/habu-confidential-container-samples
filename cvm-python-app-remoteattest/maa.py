@@ -3,7 +3,7 @@ import subprocess
 import base64
 import uuid
 
-MAA_URL = os.environ.get("MAA_URL", "https://sharedeus.eus.attest.azure.net/")
+MAA_URL = os.environ.get("MAA_URL", "https://sharedeus.eus.attest.azure.net")
 TOKEN_FILE_PATH = os.environ.get("TOKEN_FILE_PATH")
 NONCE = os.environ.get("NONCE", str(uuid.uuid4()))
 
@@ -43,6 +43,8 @@ if __name__ == "__main__":
 
             with open(TOKEN_FILE_PATH + "/maa.json", "w") as file:
                 file.write(decoded_payload)
+
+            print(f"CVM Attestation Successful!")
         else:
             raise FileNotFoundError("TOKEN_FILE_PATH environment variable not set.")
     else:
