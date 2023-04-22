@@ -13,6 +13,8 @@ RUN apt-get install -y \
     libcurl4-openssl-dev \
     libjsoncpp-dev \
     libboost-all-dev \
+    linux-libc-dev \
+    pkg-config \
     nlohmann-json3-dev \
     cmake \
     wget \
