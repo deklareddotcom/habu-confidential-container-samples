@@ -13,23 +13,12 @@ RUN apt-get install -y \
     libcurl4-openssl-dev \
     libjsoncpp-dev \
     libboost-all-dev \
-    linux-libc-dev \
-    pkg-config \
     nlohmann-json3-dev \
     cmake \
     wget \
-    curl \
-    zip \
-    unzip \
-    tar \
     git \
     python3 \
     python3-pip
-
-RUN git clone https://github.com/microsoft/vcpkg.git /usr/local/vcpkg
-RUN /usr/local/vcpkg/bootstrap-vcpkg.sh
-RUN /usr/local/vcpkg/vcpkg integrate install
-RUN /usr/local/vcpkg/vcpkg install azure-identity-cpp
 
 # Install the Azure Guest Attestation package
 RUN wget https://packages.microsoft.com/repos/azurecore/pool/main/a/azguestattestation1/azguestattestation1_1.0.5_amd64.deb
@@ -38,7 +27,6 @@ RUN rm -rf azguestattestation1_1.0.5_amd64.deb
 
 # Clone CVM Guest Attestation Repo
 RUN git clone -b sid/akv-sp https://github.com/deklareddotcom/confidential-computing-cvm-guest-attestation.git
-
 
 # Build AttestationClient app
 WORKDIR /app/confidential-computing-cvm-guest-attestation/cvm-attestation-sample-app
