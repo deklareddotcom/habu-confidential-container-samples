@@ -16,16 +16,16 @@ RUN apt-get install -y \
     nlohmann-json3-dev \
     cmake \
     wget \
+    curl \
     git \
     python3 \
     python3-pip
 
 RUN git clone https://github.com/microsoft/vcpkg.git /usr/local/vcpkg
 RUN /usr/local/vcpkg/bootstrap-vcpkg.sh
-RUN /usr/local/vcpkg/vcpkg install boost
+RUN vcpkg install azure-identity-cpp
 
 ENV VCPKG_ROOT=/usr/local/vcpkg
-RUN vcpkg install azure-identity-cpp
 
 # Install the Azure Guest Attestation package
 RUN wget https://packages.microsoft.com/repos/azurecore/pool/main/a/azguestattestation1/azguestattestation1_1.0.5_amd64.deb
