@@ -26,9 +26,8 @@ RUN apt-get install -y \
 
 RUN git clone https://github.com/microsoft/vcpkg.git /usr/local/vcpkg
 RUN /usr/local/vcpkg/bootstrap-vcpkg.sh
-RUN vcpkg install azure-identity-cpp
-
-ENV VCPKG_ROOT=/usr/local/vcpkg
+RUN /usr/local/vcpkg/vcpkg integrate install
+RUN /usr/local/vcpkg/vcpkg install azure-identity-cpp
 
 # Install the Azure Guest Attestation package
 RUN wget https://packages.microsoft.com/repos/azurecore/pool/main/a/azguestattestation1/azguestattestation1_1.0.5_amd64.deb
