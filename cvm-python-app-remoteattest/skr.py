@@ -2,7 +2,6 @@ import subprocess
 import os
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import urlparse, parse_qs
 import uuid
 
 MAA_URL = os.environ.get("MAA_URL", "https://sharedeus.eus.attest.azure.net")
@@ -11,18 +10,19 @@ PORT = 8081
 
 
 class MyServer(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length'])
+        body = self.rfile.read(content_length)
+        payload = json.loads(body.decode("utf-8"))
+
         self.send_response(200)
         self.send_header("Content-type", "application/json")
         self.end_headers()
 
-        parsed_url = urlparse(self.path)
-        query_params = parse_qs(parsed_url.query)
-
-        # access query parameters
-        secret = query_params.get('secret', [None])[0]
-        kek_key_url = query_params.get('kek_key_url', [None])[0]
-        nonce = query_params.get('nonce', [str(uuid.uuid4())])[0]
+        # access payload parameters
+        secret = payload.get('s', None)
+        kek_key_url = payload.get('k', None)
+        nonce = payload.get('n', str(uuid.uuid4()))
 
         if self.path == '/wrap':
             # wrap a key
@@ -35,6 +35,8 @@ class MyServer(BaseHTTPRequestHandler):
                     nonce,
                     "-k",
                     kek_key_url,
+                    "-c",
+                    "sp",
                     "-s",
                     secret,
                     "-w"
@@ -58,6 +60,8 @@ class MyServer(BaseHTTPRequestHandler):
                     nonce,
                     "-k",
                     kek_key_url,
+                    "-c",
+                    "sp",
                     "-s",
                     secret,
                     "-u"
