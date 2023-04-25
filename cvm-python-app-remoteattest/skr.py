@@ -46,6 +46,9 @@ class MyServer(BaseHTTPRequestHandler):
                 close_fds=True,
             )
             wrapped_key = str(p.stdout.read())
+            wrapped_key = wrapped_key.replace("b'", "")
+            wrapped_key = wrapped_key.replace("\\n", "")
+
             self.wfile.write(
                 json.dumps({"wrapped_key": wrapped_key}).encode("utf-8")
             )
@@ -71,6 +74,8 @@ class MyServer(BaseHTTPRequestHandler):
                 close_fds=True,
             )
             unwrapped_key = str(p.stdout.read())
+            unwrapped_key = unwrapped_key.replace("b'", "")
+            unwrapped_key = unwrapped_key.replace("\\n", "")
 
             self.wfile.write(
                 json.dumps({"unwrapped_key": unwrapped_key}).encode("utf-8")
