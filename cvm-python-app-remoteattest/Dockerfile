@@ -34,7 +34,9 @@ RUN cmake . && make && cp ./AttestationClient /app
 
 # Build AzureAttestSKR app
 WORKDIR /app/confidential-computing-cvm-guest-attestation/cvm-securekey-release-app
-RUN cmake . -DCMAKE_BUILD_TYPE=Debug && make && cp ./AzureAttestSKR /app
+# For debugging use -DCMAKE_BUILD_TYPE=Debug
+# RUN cmake . -DCMAKE_BUILD_TYPE=Debug && make && cp ./AzureAttestSKR /app
+RUN cmake . && make && cp ./AzureAttestSKR /app
 
 WORKDIR /app
 RUN rm -rf confidential-computing-cvm-guest-attestation
