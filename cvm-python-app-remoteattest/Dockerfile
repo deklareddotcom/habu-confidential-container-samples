@@ -26,7 +26,7 @@ RUN dpkg -i azguestattestation1_1.0.5_amd64.deb
 RUN rm -rf azguestattestation1_1.0.5_amd64.deb
 
 # Clone CVM Guest Attestation Repo
-RUN git clone -b sid/review-comments https://github.com/deklareddotcom/confidential-computing-cvm-guest-attestation.git
+RUN git clone https://github.com/deklareddotcom/confidential-computing-cvm-guest-attestation.git
 
 # Build AttestationClient app
 WORKDIR /app/confidential-computing-cvm-guest-attestation/cvm-attestation-sample-app
