@@ -1,0 +1,9 @@
+name: PR Label Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled, ready_for_review, review_requested, unlocked, edited]
+
+jobs:
+  check-labels:
+    uses: deklareddotcom/github-iac/.github/workflows/pr-label-check.yml@main
